@@ -1,94 +1,79 @@
-# Obsidian Sample Plugin
+# Obsidian Gyazo プラグイン
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+このプラグインは、Gyazo APIを使用して画像とメタデータをダウンロードし、Obsidianのノートとして保存するためのプラグインです。Gyazoで撮影したスクリーンショットを自動的にObsidianのノートとして整理することができます。
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## 主な機能
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- Gyazo APIを使用して画像とメタデータを取得
+- 画像ごとにノートを自動作成（画像URL、メタデータ、OCRテキストを含む）
+- 同じ画像IDのノートが存在する場合は、メタデータとOCRデータを自動更新
+- Gyazoで削除された画像の検出と対応するノートの削除（オプション）
+- 定期的な画像取得の自動実行（設定可能）
+- 画像ノートに自動的にカテゴリタグを付与
 
-## First time developing plugins?
+## インストール方法
 
-Quick starting guide for new plugin devs:
+### コミュニティプラグインからインストール（予定）
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+1. Obsidianの設定を開く
+2. 「サードパーティプラグイン」セクションで「コミュニティプラグイン」を選択
+3. 「閲覧」をクリックし、「Gyazo」で検索
+4. 「Obsidian Gyazo」プラグインをインストール
 
-## Releasing new releases
+### 手動インストール
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+1. [リリースページ](https://github.com/dotimpact/obsidian-gyazo/releases)から最新版をダウンロード
+2. ダウンロードしたファイル（`main.js`, `manifest.json`, `styles.css`）をObsidianのプラグインフォルダ（`<あなたのヴォールト>/.obsidian/plugins/obsidian-gyazo/`）に配置
+3. Obsidianを再起動し、設定からプラグインを有効化
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+## 使い方
 
-## Adding your plugin to the community plugin list
+### 初期設定
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+1. Gyazo APIのClient IDを取得する
+   - [Gyazo Developer](https://gyazo.com/oauth/applications)にアクセス
+   - 新しいアプリケーションを作成し、Client IDを取得
+2. Obsidianの設定から「Gyazo」プラグインを選択
+3. 取得したClient IDを入力
+4. 保存先ディレクトリを設定（デフォルトは「Gyazo」）
+5. 必要に応じて他の設定を調整
 
-## How to use
+### 画像の取得
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+- リボンメニューの「Gyazo画像取得」ボタンをクリック
+- または、コマンドパレットから「Gyazo画像を取得」を実行
 
-## Manually installing the plugin
+### 画像の削除
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+1. 削除したいGyazo画像のノートを開く
+2. コマンドパレットから「現在のノートのGyazo画像を削除」を実行
+3. 確認ダイアログで「画像のみ削除」または「画像とノートを削除」を選択
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+## 設定オプション
 
-## Funding URL
+- **Gyazo Client ID**: Gyazo APIの認証に使用するClient ID
+- **保存ディレクトリ**: Gyazo画像のノートを保存するディレクトリ
+- **最大取得画像数**: 一度に取得する最大画像数
+- **定期取得間隔**: 自動的に画像を取得する間隔（時間単位、0で無効）
+- **削除された画像を検知**: Gyazoで削除された画像を検知するかどうか
+- **削除された画像のノートも削除**: 削除された画像のノートも自動的に削除するかどうか
 
-You can include funding URLs where people who use your plugin can financially support it.
+## 更新履歴
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+### 1.0.0
+- 初回リリース
+- 基本的なGyazo画像の取得と管理機能
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+### 1.0.1
+- ファイル名の形式を日付+時間（YYYY-MM-DD_HHMMSS）に変更し、ファイル名の衝突を防止
+- ノートのフロントマターにカテゴリタグを追加
 
-If you have multiple URLs, you can also do:
+## 開発者向け情報
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+- このプラグインはTypeScriptで開発されています
+- ソースコード: [GitHub](https://github.com/dotimpact/obsidian-gyazo)
+- 問題報告やフィードバック: [Issues](https://github.com/dotimpact/obsidian-gyazo/issues)
 
-## API Documentation
+## ライセンス
 
-See https://github.com/obsidianmd/obsidian-api
+MIT
